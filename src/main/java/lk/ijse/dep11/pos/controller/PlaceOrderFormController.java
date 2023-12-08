@@ -16,6 +16,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import lk.ijse.dep11.pos.db.CustomerDataAccess;
+import lk.ijse.dep11.pos.db.ItemDataAccess;
 import lk.ijse.dep11.pos.tm.Customer;
 import lk.ijse.dep11.pos.tm.Item;
 
@@ -54,6 +55,25 @@ public class PlaceOrderFormController {
                 }else{
                     txtCustomerName.clear();
                     txtCustomerName.setDisable(true);
+                }
+            });
+            cmbItemCode.getItems().addAll(ItemDataAccess.getAllItems());
+            cmbItemCode.getSelectionModel().selectedItemProperty().addListener((ov, prev, cur) ->{
+                if (cur != null){
+                    txtDescription.setText(cur.getDescription());
+                    txtQtyOnHand.setText(cur.getQty() + "");
+                    txtUnitPrice.setText(cur.getUnitPrice().toString());
+
+                    for (TextField txt : new TextField[]{txtDescription, txtQtyOnHand, txtUnitPrice}) {
+                        txt.setDisable(false);
+                        txt.setEditable(false);
+                    }
+                    txtQty.setDisable(cur.getQty() == 0);
+                }else{
+                    for (TextField txt : new TextField[]{txtDescription, txtQtyOnHand, txtUnitPrice, txtQty}) {
+                        txt.setDisable(true);
+                        txt.clear();
+                    }
                 }
             });
         } catch (SQLException e) {
