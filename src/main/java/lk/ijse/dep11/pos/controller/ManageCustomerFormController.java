@@ -18,6 +18,8 @@ import javafx.stage.Stage;
 import lk.ijse.dep11.pos.db.CustomerDataAccess;
 import lk.ijse.dep11.pos.db.OrderDataAccess;
 import lk.ijse.dep11.pos.tm.Customer;
+import javafx.scene.Node;
+import lk.ijse.dep11.pos.AppInitializer;
 
 import java.io.IOException;
 import java.net.URL;
@@ -34,13 +36,7 @@ public class ManageCustomerFormController {
     public JFXButton btnAddNew;
 
     public void navigateToHome(MouseEvent mouseEvent) throws IOException {
-        URL resource = this.getClass().getResource("/view/MainForm.fxml");
-        Parent root = FXMLLoader.load(resource);
-        Scene scene = new Scene(root);
-        Stage primaryStage = (Stage) (this.root.getScene().getWindow());
-        primaryStage.setScene(scene);
-        primaryStage.centerOnScreen();
-        Platform.runLater(primaryStage::sizeToScene);
+        MainFormController.navigateToMain(root);
     }
 
     public void initialize(){
@@ -58,13 +54,13 @@ public class ManageCustomerFormController {
         }
         tblCustomers.getSelectionModel().selectedItemProperty().addListener((ov, prev, cur) ->{
             if (cur != null){
-                btnSave.setText("Update");
+                btnSave.setText("UPDATE");
                 btnDelete.setDisable(false);
                 txtCustomerId.setText(cur.getId());
                 txtCustomerName.setText(cur.getName());
                 txtCustomerAddress.setText(cur.getAddress());
             }else{
-                btnSave.setText("Save");
+                btnSave.setText("SAVE");
                 btnDelete.setDisable(true);
             }
         });
