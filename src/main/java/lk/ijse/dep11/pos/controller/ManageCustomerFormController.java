@@ -55,6 +55,18 @@ public class ManageCustomerFormController {
             e.printStackTrace();
             new Alert(Alert.AlertType.ERROR, "Failed to load customers, try later!").show();
         }
+        tblCustomers.getSelectionModel().selectedItemProperty().addListener((ov, prev, cur) ->{
+            if (cur != null){
+                btnSave.setText("Update");
+                btnDelete.setDisable(false);
+                txtCustomerId.setText(cur.getId());
+                txtCustomerName.setText(cur.getName());
+                txtCustomerAddress.setText(cur.getAddress());
+            }else{
+                btnSave.setText("Save");
+                btnDelete.setDisable(true);
+            }
+        });
     }
 
 
