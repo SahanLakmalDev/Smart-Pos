@@ -22,6 +22,11 @@ import lk.ijse.dep11.pos.db.OrderDataAccess;
 import lk.ijse.dep11.pos.tm.Customer;
 import lk.ijse.dep11.pos.tm.Item;
 import lk.ijse.dep11.pos.tm.OrderItem;
+import net.sf.jasperreports.engine.*;
+import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
+import net.sf.jasperreports.engine.design.JasperDesign;
+import net.sf.jasperreports.engine.xml.JRXmlLoader;
+import net.sf.jasperreports.view.JasperViewer;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -30,6 +35,8 @@ import java.sql.Date;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 public class PlaceOrderFormController {
@@ -180,6 +187,7 @@ public class PlaceOrderFormController {
                     cmbCustomerId.getValue().getId(),
                     tblOrderDetails.getItems());
             // Print the pos bill
+            printBill();
             newOrder();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -188,6 +196,30 @@ public class PlaceOrderFormController {
     }
 
     public void txtQty_OnAction(ActionEvent actionEvent) {
+    }
+
+    private void printBill(){
+        try {
+            JasperDesign jasperDesign = JRXmlLoader
+                    .load(getClass().getResourceAsStream("/print/pos-bill.jrxml"));
+
+            JasperReport jasperReport = JasperCompileManager.compileReport(jasperDesign);
+
+            Map<String, Object> reportParams = new HashMap<>();
+            reportParams.put("id", lblId.getText().replace("Order ID: ", "").strip());
+            reportParams.put("date", lblDate.getText());
+            reportParams.put("customer-id", cmbCustomerId.getValue().getId());
+            reportParams.put("customer-name", cmbCustomerId.getValue().getName());
+            reportParams.put("total", lblTotal.getText());
+            JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, reportParams,
+                    new JRBeanCollectionDataSource(tblOrderDetails.getItems()));
+
+            JasperViewer.viewReport(jasperPrint, false);
+            // JasperPrintManager.printReport(jasperPrint, false);
+        } catch (JRException e) {
+            e.printStackTrace();
+            new Alert(Alert.AlertType.ERROR, "Failed to print the bill").show();
+        }
     }
 
 
